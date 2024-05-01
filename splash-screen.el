@@ -63,6 +63,12 @@
 ;;; Code:
 (require 'cl-lib)
 
+(defun fortune-get ()
+  (with-temp-buffer
+    (let ((fortune-buffer-name (current-buffer)))
+      (fortune-in-buffer t fortune-file)
+      (if (bolp) (delete-char -1))
+      (buffer-string))))
 
 (defun splash-screen ()
   "Emacs splash screen"
@@ -130,8 +136,7 @@
           (insert (propertize
                    "GNU Emacs comes with ABSOLUTELY NO WARRANTY" 'face 'shadow))
           (center-line) (insert "\n")
-          (insert (propertize
-                   "Copyright (C) 2020 Free Software Foundation, Inc." 'face 'shadow))
+          (insert (propertize (fortune-get) 'face 'shadow))
           (center-line) (insert "\n")
 
           (goto-char 0)
@@ -189,7 +194,7 @@
         (kill-buffer "*splash*")))
 
 ;; Suppress any startup message in the echo area
-(run-with-idle-timer 0.05 nil (lambda() (message nil)))
+(run-with-idle-timer 0.05 nil (lambda () (message nil)))
 
 ;; Install hook after frame parameters have been applied and only if
 ;; no option on the command line
